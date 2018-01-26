@@ -1,4 +1,0 @@
-sceneSetups:
-- path: Assets/MGGJ18.unity
-  isLoaded: 1
-  isActive: 1
