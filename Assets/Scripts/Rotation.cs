@@ -1,26 +1,77 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Collections;
+using System.Runtime.CompilerServices;
+using UnityEditor.UI;
+using UnityEngine.Analytics;
+using UnityEngine.Experimental.Audio.Google;
 
-public class Rotation : MonoBehaviour {
+public enum ZoomerState
+{
+	Captured,
+	Flying
+}
 
-	GameObject sphere;
-	public Transform center;
+public class Rotation : MonoBehaviour
+{
+
 	public Vector3 axis = Vector3.up;
-	public Vector3 desiredPosition;
+	
 	public float radius = 2.0f;
-	public float radiusSpeed = 0.5f;
-	public float rotationSpeed = 80.0f;
+	public float linearSpeed = 1f;
+	public float rotationSpeed = 100.0f;
+	
+	public ZoomerState State = ZoomerState.Captured;
+	public Vector3 LinearDirection;
 
-	void Start () {
-		sphere = GameObject.FindWithTag("Sphere");
-		center = sphere.transform;
-		transform.position = (transform.position - center.position).normalized * radius + center.position;
+	public GameObject Owner;
+
+	void Start()
+	{
+		transform.position = (transform.position - Owner.transform.position).normalized * radius + Owner.transform.position;
 		radius = 2.0f;
 	}
 
-	void Update () {
-		transform.RotateAround (center.position, axis, rotationSpeed * Time.deltaTime);
-		desiredPosition = (transform.position - center.position).normalized * radius + center.position;
-		transform.position = Vector3.MoveTowards(transform.position, desiredPosition, Time.deltaTime * radiusSpeed);
+	public void SetOwner(GameObject g)
+	{
+		Owner = g;
+		
+	}
+	void Update()
+	{
+
+		if (Input.GetMouseButtonDown(0))
+		{
+			State = ZoomerState.Flying;
+			LinearDirection = Vector3.Cross(transform.position - Owner.transform.position, Vector3.back).normalized;
+		}
+
+		switch (State)
+		{
+			case ZoomerState.Captured:
+				transform.RotateAround(Owner.transform.position, axis, rotationSpeed * Time.deltaTime);
+				break;
+			case ZoomerState.Flying:
+				transform.position = transform.position + LinearDirection * linearSpeed * Time.deltaTime;
+				if (Vector3.Magnitude(transform.position - Owner.transform.position) > 20)
+				{
+					transform.position = (transform.position - Owner.transform.position).normalized * radius + Owner.transform.position;
+					State = ZoomerState.Captured;
+					gameObject.SetActive(false);
+					transform.position = (transform.position - Owner.transform.position).normalized * radius + Owner.transform.position;
+					gameObject.SetActive(true);
+					
+				}
+				break;
+		}
+		
+	}
+	
+	void OnCollisionEnter(Collision collision)
+	{
+		Debug.Log(collision.gameObject.name);
+
+		Owner = collision.gameObject;
+		State = ZoomerState.Captured;	
 	}
 }
