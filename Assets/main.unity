@@ -272,9 +272,10 @@ MonoBehaviour:
   State: 0
   LinearDirection: {x: 0, y: 0, z: 0}
   Owner: {fileID: 0}
+  PreviousOwner: {fileID: 0}
+  key: 0
   explosion: {fileID: 4319584904662688, guid: ca845762981e54fc7b8e6c474f02845e, type: 2}
   highlight: {fileID: 4264442166399076, guid: 5609ef2144c424053b78216b50afafed, type: 2}
-  key: 0
 --- !u!23 &1280080794
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -493,7 +494,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
 --- !u!1 &1511208674
 GameObject:
@@ -547,8 +548,8 @@ Camera:
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
-  orthographic: 0
-  orthographic size: 5
+  orthographic: 1
+  orthographic size: 60
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -692,3 +693,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3b77bb82fa9d40a6ae2744185772c12, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  State: 0
