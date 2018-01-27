@@ -25,6 +25,7 @@ public class Rotation : MonoBehaviour
 	public Vector3 LinearDirection;
 
 	public GameObject Owner;
+	public KeyCode key;
 
 	void Start()
 	{
@@ -40,7 +41,7 @@ public class Rotation : MonoBehaviour
 	void Update()
 	{
 
-		if (Input.GetMouseButtonDown(0))
+		if ( State == ZoomerState.Captured && Input.GetKeyDown(key))
 		{
 			State = ZoomerState.Flying;
 			LinearDirection = Vector3.Cross(transform.position - Owner.transform.position, Vector3.back).normalized;
@@ -53,7 +54,7 @@ public class Rotation : MonoBehaviour
 				break;
 			case ZoomerState.Flying:
 				transform.position = transform.position + LinearDirection * linearSpeed * Time.deltaTime;
-				if (Vector3.Magnitude(transform.position - Owner.transform.position) > 20)
+				if (Vector3.Magnitude(transform.position - Owner.transform.position) > 100)
 				{
 					transform.position = (transform.position - Owner.transform.position).normalized * radius + Owner.transform.position;
 					State = ZoomerState.Captured;
@@ -69,9 +70,20 @@ public class Rotation : MonoBehaviour
 	
 	void OnCollisionEnter(Collision collision)
 	{
-		Debug.Log(collision.gameObject.name);
-
-		Owner = collision.gameObject;
-		State = ZoomerState.Captured;	
+		var node = collision.gameObject.GetComponent<Node>();
+		if (node != null)
+		{
+			if (node.CanAcceptPlayer())
+			{
+				Owner = collision.gameObject;	
+				State = ZoomerState.Captured;
+			}
+			else
+			{
+		
+			}
+	
+		}
+	
 	}
 }
