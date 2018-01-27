@@ -94,8 +94,9 @@ public class Main : MonoBehaviour
 				var rpj = UnityEngine.Random.Range(0, 10);
 
 				attached = rotationComponent.attachToNode(GameData.Instance.nodes[rpi, rpj]);
-				rotationComponent.ResetPosition();
+
 			}
+			//rotationComponent.ResetPosition();
 			p.zoomer = z;
 			rotationComponent.key = p.key;
 			z.SetActive(true);	

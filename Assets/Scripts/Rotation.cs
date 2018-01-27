@@ -31,6 +31,9 @@ public class Rotation : MonoBehaviour
 	
 	public KeyCode key;
 
+	public Transform explosion;
+	public Transform highlight;
+
 	void Start()
 	{
 		transform.position = (transform.position - Owner.transform.position).normalized * radius + Owner.transform.position;
@@ -147,6 +150,11 @@ public class Rotation : MonoBehaviour
 			else
 			{
 				ResetPosition();
+				
+				Instantiate (explosion, Owner.transform);
+
+				Instantiate (highlight, Owner.transform);
+
 			}
 		}
 //		{

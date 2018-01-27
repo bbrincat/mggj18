@@ -54,10 +54,13 @@
   <ItemGroup>
     <Compile Include="Assets\Camera.cs" />
     <Compile Include="Assets\Scripts\AddPlayerButton.cs" />
+    <Compile Include="Assets\Scripts\EmitStop.cs" />
     <Compile Include="Assets\Scripts\Main.cs" />
     <Compile Include="Assets\Scripts\Node.cs" />
     <Compile Include="Assets\Scripts\PlayerSelect.cs" />
     <Compile Include="Assets\Scripts\Rotation.cs" />
+    <Compile Include="Assets\Scripts\StopLoop.cs" />
+    <None Include="Assets\Shaders\Glow.shader" />
     <Reference Include="UnityEngine.UIAutomation">
       <HintPath>/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/UIAutomation/UnityEngine.UIAutomation.dll</HintPath>
     </Reference>
