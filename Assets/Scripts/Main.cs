@@ -76,24 +76,29 @@ public class Main : MonoBehaviour
 		
 		//temporary players
 		GameData.Instance.Players.Add( new Player(KeyCode.Q));
-		GameData.Instance.Players.Add( new Player(KeyCode.P));
-		GameData.Instance.Players.Add( new Player(KeyCode.C));
-		GameData.Instance.Players.Add( new Player(KeyCode.M));
+//		GameData.Instance.Players.Add( new Player(KeyCode.P));
+//		GameData.Instance.Players.Add( new Player(KeyCode.C));
+//		GameData.Instance.Players.Add( new Player(KeyCode.M));
 		
 		var players = GameData.Instance.Players;
 		foreach (Player p in  players)
 		{
 			var z = Instantiate(zoomer, new Vector3(0, 0, 0), Quaternion.identity);
+			var rotationComponent = z.GetComponent<Rotation>();
 
 			//Put player on a random node
-			var rpi = UnityEngine.Random.Range(0, 10);
-			var rpj = UnityEngine.Random.Range(0, 10);
-			var rotationComponent = z.GetComponent<Rotation>();
-			
-			rotationComponent.SetOwner(GameData.Instance.nodes[rpi, rpj]);
-			rotationComponent.key = p.key;
+			var attached = false;
+			while (!attached)
+			{
+				var rpi = UnityEngine.Random.Range(0, 10);
+				var rpj = UnityEngine.Random.Range(0, 10);
+
+				attached = rotationComponent.attachToNode(GameData.Instance.nodes[rpi, rpj]);
+				rotationComponent.ResetPosition();
+			}
 			p.zoomer = z;
-			z.SetActive(true);
+			rotationComponent.key = p.key;
+			z.SetActive(true);	
 		}
 
 	}

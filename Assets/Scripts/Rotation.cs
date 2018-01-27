@@ -4,12 +4,14 @@ using System.Collections;
 using System.Runtime.CompilerServices;
 using UnityEditor.UI;
 using UnityEngine.Analytics;
+using UnityEngine.Assertions.Must;
 using UnityEngine.Experimental.Audio.Google;
 
 public enum ZoomerState
 {
 	Captured,
-	Flying
+	Flying,
+	Collision
 }
 
 public class Rotation : MonoBehaviour
@@ -25,6 +27,8 @@ public class Rotation : MonoBehaviour
 	public Vector3 LinearDirection;
 
 	public GameObject Owner;
+	public GameObject PreviousOwner;
+	
 	public KeyCode key;
 
 	void Start()
@@ -35,55 +39,122 @@ public class Rotation : MonoBehaviour
 
 	public void SetOwner(GameObject g)
 	{
-		Owner = g;
-		
+		Owner = g;	
 	}
+	
+	public Node GetCurrentNode()
+	{
+		return Owner.GetComponent<Node>();
+	}
+	
+	public Node GetPreviousNode()
+	{
+		if (PreviousOwner != null)
+		{
+			return PreviousOwner.GetComponent<Node>();
+		}
+
+		return null;
+	}
+
+	public void  ResetPosition()
+	{
+		transform.position = (transform.position - Owner.transform.position).normalized * radius + Owner.transform.position;
+	}
+
 	void Update()
 	{
-
-		if ( State == ZoomerState.Captured && Input.GetKeyDown(key))
-		{
-			State = ZoomerState.Flying;
-			LinearDirection = Vector3.Cross(transform.position - Owner.transform.position, Vector3.back).normalized;
-		}
+		
+		Debug.Log("Update: " + State );	
 
 		switch (State)
 		{
 			case ZoomerState.Captured:
-				transform.RotateAround(Owner.transform.position, axis, rotationSpeed * Time.deltaTime);
+				if (Input.GetKeyDown(key))
+				{
+					LinearDirection = Vector3.Cross(transform.position - Owner.transform.position, Vector3.back).normalized;
+					PreviousOwner = Owner;
+					State = ZoomerState.Flying;
+				}
+				else
+				{
+					transform.RotateAround(Owner.transform.position, axis, rotationSpeed * Time.deltaTime);
+				}
 				break;
 			case ZoomerState.Flying:
 				transform.position = transform.position + LinearDirection * linearSpeed * Time.deltaTime;
-				if (Vector3.Magnitude(transform.position - Owner.transform.position) > 100)
+				
+				//Collided with nothing.
+				if (Vector3.Magnitude(transform.position - PreviousOwner.transform.position) > 100)
 				{
-					transform.position = (transform.position - Owner.transform.position).normalized * radius + Owner.transform.position;
-					State = ZoomerState.Captured;
+//					transform.position = (transform.position - Owner.transform.position).normalized * radius + Owner.transform.position;
+			
 					gameObject.SetActive(false);
-					transform.position = (transform.position - Owner.transform.position).normalized * radius + Owner.transform.position;
+					transform.position = (transform.position - PreviousOwner.transform.position).normalized * radius + PreviousOwner.transform.position;
 					gameObject.SetActive(true);
 					
+					State = ZoomerState.Captured;
+
 				}
 				break;
 		}
 		
 	}
+
+	
+	
+	public bool attachToNode(GameObject gameObject)
+	{
+		var node = gameObject.GetComponent<Node>();
+		
+		Debug.Log(node);
+		if (node != null)
+		{
+			if (node.TryAcceptPlayer())
+			{
+				Owner = gameObject;
+				if (GetPreviousNode() != null)
+				{
+					GetPreviousNode().Release();
+				}
+
+				State = ZoomerState.Captured;
+				return true;
+			}
+		}
+
+		return false;
+	}
 	
 	void OnCollisionEnter(Collision collision)
 	{
-		var node = collision.gameObject.GetComponent<Node>();
-		if (node != null)
-		{
-			if (node.CanAcceptPlayer())
+		Debug.Log("Collision: " + State );	
+//		State = ZoomerState.Collision;
+		
+		if (State != ZoomerState.Captured) {
+			if (!attachToNode(collision.gameObject))
 			{
-				Owner = collision.gameObject;	
-				State = ZoomerState.Captured;
+				var opposite = Vector3.Dot(LinearDirection, collision.contacts[0].normal);
+				LinearDirection = (LinearDirection - opposite * collision.contacts[0].normal).normalized;
+//			foreach (ContactPoint contact in collision.contacts) {
+//				print(contact.thisCollider.name + " hit " + contact.otherCollider.name);
+//				
+//				Debug.DrawRay(contact.point, contact.normal, Color.white);
+				//}
+				//Do bounce back
 			}
+
 			else
 			{
-		
+				ResetPosition();
 			}
-	
 		}
-	
+//		{
+//			State = ZoomerState.Captured;
+//			PreviousOwner = Owner;
+//			Owner = nul
+//			PreviousOwner.GetComponent<Node>().Release();
+//			
+//		}
 	}
 }

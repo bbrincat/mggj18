@@ -19,10 +19,19 @@ public class Node : MonoBehaviour {
 		
 	}
 
-	public bool CanAcceptPlayer()
+	public void Release()
+	{
+		if (State == NodeState.Occupied)
+		{
+			State = NodeState.Free;
+		}
+	}
+
+	public bool TryAcceptPlayer()
 	{
 		if (State == NodeState.Free)
 		{
+			State = NodeState.Occupied;
 			return true;
 		}else
 		{
