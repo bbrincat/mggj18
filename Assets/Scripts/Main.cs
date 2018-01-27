@@ -24,12 +24,58 @@ public class GameData
 	}
 	
 	public List<Player> Players = new List<Player>();
+	public List<Objective> Objectives = new List<Objective>();
+	
 	
 	public GameObject[,] nodes = new GameObject[10,10];
 
 }
 
+public class Objective
+{
+	public GameObject StartNode, OwnerNode, OwnerPlayer, FinalNode;
+
+	public enum ObjectiveState
+	{
+		WaitingCapture,
+		Captured,
+		Delivered,
+		Invalid
+	}
+
+	public ObjectiveState State;
+
 	
+	
+	public Objective(GameObject startObject, GameObject finalObject)
+	{
+		var startNode = startObject.GetComponent<Node>();
+		var finalNode = finalObject.GetComponent<Node>();
+
+		if (startNode.CanRegisterObjective() && finalNode.CanRegisterObjective())
+		{
+			startNode.Objective = this;
+			finalNode.Objective = this;
+			
+			StartNode = startObject;
+			OwnerNode = startObject;
+			FinalNode = finalObject;
+
+			startNode.InitObjective(Node.NodeObjectiveState.Start);
+			finalNode.InitObjective(Node.NodeObjectiveState.Final);
+
+			State = ObjectiveState.WaitingCapture;
+		}
+		else
+		{
+			State = ObjectiveState.Invalid;
+		}		
+		
+		
+	}
+
+}	
+
 public class Player
 {
 	public GameObject zoomer;
@@ -101,6 +147,13 @@ public class Main : MonoBehaviour
 			rotationComponent.key = p.key;
 			z.SetActive(true);	
 		}
+		
+		var objective = new Objective(GameData.Instance.nodes[0, 0],GameData.Instance.nodes[9, 9]);
+		if (objective.State != Objective.ObjectiveState.Invalid)
+		{
+			GameData.Instance.Objectives.Add(objective);
+		}
+		
 
 	}
 
