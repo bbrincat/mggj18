@@ -131,6 +131,7 @@ public class Rotation : MonoBehaviour
 	
 	void OnCollisionEnter(Collision collision)
 	{
+		
 		Debug.Log("Collision: " + State );	
 //		State = ZoomerState.Collision;
 		
@@ -146,7 +147,6 @@ public class Rotation : MonoBehaviour
 				//}
 				//Do bounce back
 			}
-
 			else
 			{
 				ResetPosition();
