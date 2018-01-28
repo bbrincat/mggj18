@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework.Constraints;
+using UnityEditor;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -19,6 +20,7 @@ public class Node : MonoBehaviour {
 		Start,
 		StartTaken,
 		Final,
+		FinalDisabled,
 		FinalTaken
 	}
 
@@ -27,6 +29,12 @@ public class Node : MonoBehaviour {
 	public NodeState State = NodeState.Free;
 	public NodeObjectiveState nodeObjectiveState = NodeObjectiveState.None;
 	public Objective Objective;
+
+	public Player CurrentPlayer;
+	
+	
+//	private bool ObjectiveDecoration = false;
+	private GameObject ObjectiveDecoration;
 	
 	// Use this for initialization
 	void Start () {
@@ -38,29 +46,43 @@ public class Node : MonoBehaviour {
 		return nodeObjectiveState != NodeObjectiveState.Start;
 	}
 
-	public void ActivateObjective(NodeObjectiveState state)
+	public void ActivateObjective()
 	{
-		if (state == NodeObjectiveState.Start)
+		ObjectiveDecoration = Instantiate(GameData.Instance.objective, gameObject.transform);
+		
+		ObjectiveDecoration.SetActive(true);
+		nodeObjectiveState = Node.NodeObjectiveState.Start;
+
+	}
+	
+	public void ActivateObjectiveEndpoint()
+	{
+		if (ObjectiveDecoration == null)
 		{
 			ObjectiveDecoration = Instantiate(GameData.Instance.objective, gameObject.transform);
-		}
-
-		if (state == NodeObjectiveState.Final)
-		{
-			ObjectiveDecoration = Instantiate(GameData.Instance.objective, gameObject.transform);
-			Debug.Log("Activating Final Objective");
-
 		}
 		
 		ObjectiveDecoration.SetActive(true);
-		nodeObjectiveState = state;
+		nodeObjectiveState = NodeObjectiveState.Final;
 
 	}
+	
+	public void DeactivateObjectiveEndpoint()
+	{
+		ObjectiveDecoration.SetActive(false);
+		nodeObjectiveState = NodeObjectiveState.FinalDisabled;
+
+	}
+	
 
 	public void DeactivateObjective()
 	{
 		nodeObjectiveState = NodeObjectiveState.None;
-		ObjectiveDecoration.SetActive(false);
+		if (ObjectiveDecoration != null)
+		{
+			ObjectiveDecoration.SetActive(false);
+
+		}
 	}
 	
 	
@@ -74,56 +96,76 @@ public class Node : MonoBehaviour {
 
 	public bool TryAcceptPlayer(Player player)
 	{
-		if (State == NodeState.Free)
+		switch (State)
 		{
-			if (nodeObjectiveState == NodeObjectiveState.Start)
-			{
-				ObjectiveDecoration.SetActive(false);
-				
-				Objective.State = Objective.ObjectiveState.Captured;
-				nodeObjectiveState = NodeObjectiveState.StartTaken;
-
-				player.hasBall = true;
-				Debug.Log("Transferred ball to player");
-				
-			}
-
-			if (nodeObjectiveState == NodeObjectiveState.Final)
-			{
-				if (player.hasBall)
+			case NodeState.Free:
+			
+				if (nodeObjectiveState == NodeObjectiveState.Start)
 				{
-					Debug.Log("ball delivered");
-
 					ObjectiveDecoration.SetActive(false);
 					
-					nodeObjectiveState = NodeObjectiveState.FinalTaken;
-
-					player.hasBall = false;
+					Objective.State = Objective.ObjectiveState.Captured;
+					nodeObjectiveState = NodeObjectiveState.StartTaken;
+	
+					player.TakeBall();
+					Debug.Log("Transferred ball to player");
 					
-					Objective.winner = player;
-					Objective.DeactivateObjective();
+					Objective.ActivateObjectiveEndpoints(player);
 
-					//TODO replace
-					GameData.Instance.bravu.SetActive(true);
 				}
 	
-			}
-			
-			State = NodeState.Occupied;
+				if (nodeObjectiveState == NodeObjectiveState.Final)
+				{
+					if (player.hasBall)
+					{
+						Debug.Log("ball delivered");
+	
+						ObjectiveDecoration.SetActive(false);
+						
+						nodeObjectiveState = NodeObjectiveState.FinalTaken;
+	
+						player.hasBall = false;
+						
+						Objective.winner = player;
+						Objective.DeactivateObjective();
+	
+						//TODO replace
+						GameData.Instance.bravu.SetActive(true);
+					}
+				}
 
-			return true;
-		}else
-		{
-			return false;
+				CurrentPlayer = player;
+				State = NodeState.Occupied;
+				return true;
+				break;
+
+			case NodeState.Occupied:
+				Debug.Log(CurrentPlayer + " lost the ball. Play "+ player.key+ "took ball");
+
+				
+				if (CurrentPlayer.hasBall)
+				{
+					Debug.Log(Objective);
+					Debug.Log(player);
+					Debug.Log(CurrentPlayer);
+					
+					GameData.Instance.currentObjective.ActivateObjectiveEndpoints(player);
+					GameData.Instance.currentObjective.DeactivateObjectiveEndpoints(CurrentPlayer);
+
+					CurrentPlayer.ReleaseBall();
+					player.TakeBall();
+					Debug.Log(CurrentPlayer.key + " lost the ball. Play "+ player.key+ "took ball");
+				}
+				return false;
 		}
+
+		return false;
 	}
 
-//	private bool ObjectiveDecoration = false;
-	private GameObject ObjectiveDecoration;
 	
 	
 	// Update is called once per frame
 	void Update () {
-		
+		Debug.Log("Objective" + Objective);
 	}
 }

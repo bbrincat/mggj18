@@ -17,5 +17,18 @@ public class Player
         id = Guid.NewGuid();
         this.key = key;
     }
+
+    public void TakeBall()
+    {
+        hasBall = true;
+        zoomer.GetComponent<Rotation>().TakeBall();
+    }
+
+    public void ReleaseBall()
+    {
+        hasBall = false;
+        zoomer.GetComponent<Rotation>().ReleaseBall();
+
+    }
 }
 	

@@ -24,16 +24,48 @@ public class Main : MonoBehaviour
 	void Start ()
 	{
 		Debug.Log("Entered Main.cs");
+//
+//		var aspectRatio = Screen.width / Screen.height;
+//		float screenheight = 25;
+//		float screenwidth = screenheight * aspectRatio;
+//		
+////		float vspacing = (screenheight - (screenheight * 0.1f))/10;
+////		float hspacing = (screenwidth - (screenwidth * 0.1f))/10;
+////		
+//		float vspacing = (screenheight)/10;
+//		float hspacing = (screenwidth)/10;
+//		//setup nodes
+//		for (int i = 0; i < 10; i++)
+//		{
+//			for (int j = 0; j < 10; j++)
+//			{
+//				var ri = UnityEngine.Random.Range(-0.4f, 0.4f);
+//				var rj = UnityEngine.Random.Range(-0.4f, 0.4f);
+//				ri = 0;
+//				rj = 0;
+//				var x = vspacing * (i - 5f + ri);
+//				var y = hspacing * (j - 5f + rj);
+//				var offset = new Vector3( x, y ,0);
+//				var position = new Vector3(0,0,0) + offset;
+//				var go = Instantiate(GameData.Instance.node, position, Quaternion.identity);
+//				GameData.Instance.nodes[i,j] = go;
+//				go.SetActive(true);
+//			}
+//		}
+
+
+		var vgap = 5;
+		var hgap = 11;
 		
 		//setup nodes
 		for (int i = 0; i < 10; i++)
 		{
 			for (int j = 0; j < 10; j++)
 			{
-				var ri = UnityEngine.Random.Range(-0.4f, 0.4f);
-				var rj = UnityEngine.Random.Range(-0.4f, 0.4f);
+				var ri = UnityEngine.Random.Range(-0.35f, 0.35f);
+				var rj = UnityEngine.Random.Range(-0.35f, 0.35f);
 
-				var offset = new Vector3(10 * (i - 5 +ri), 10 * (j - 5 +rj ) , 0);
+				var offset = new Vector3(hgap * (i - 5 +ri), vgap * (j - 5 +rj ) , 0);
 				var position = new Vector3(0,0,0) + offset;
 				var go = Instantiate(GameData.Instance.node, position, Quaternion.identity);
 				GameData.Instance.nodes[i,j] = go;
@@ -69,10 +101,10 @@ public class Main : MonoBehaviour
 //			z.SetActive(true);	
 //		}
 		var playerNodes = new List<GameObject>(); 
-		playerNodes.Add(GameData.Instance.nodes[0,0]);
-		playerNodes.Add(GameData.Instance.nodes[9,0]);
 		playerNodes.Add(GameData.Instance.nodes[0,9]);
 		playerNodes.Add(GameData.Instance.nodes[9,9]);
+		playerNodes.Add(GameData.Instance.nodes[0,0]);
+		playerNodes.Add(GameData.Instance.nodes[9,0]);
 
 		var finalNodes = new List<GameObject>();
 		finalNodes.Add(GameData.Instance.nodes[0, 0]);

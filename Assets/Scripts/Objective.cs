@@ -1,10 +1,14 @@
+using System;
 using UnityEngine;
 using System.Collections.Generic;
+
 
 public class Objective
 {
     public GameObject StartObject, OwnerObject, OwnerPlayer;
     public List<GameObject> FinalObjects;
+
+    public Dictionary<Guid, GameObject> playerObjectives = new Dictionary<Guid, GameObject>();
     
     public enum ObjectiveState
     {
@@ -25,6 +29,12 @@ public class Objective
         OwnerObject = startObject;
 
         FinalObjects = finalObjects;
+        
+        for (int i= 0; i < GameData.Instance.Players.Count; i++)
+        {
+            playerObjectives.Add(GameData.Instance.Players[i].id,finalObjects[i]); 
+        }
+        
     }
 
     public bool CanActivateObjective()
@@ -48,19 +58,34 @@ public class Objective
         {
             State = ObjectiveState.WaitingCapture;
             startNode.Objective = this;
-            startNode.ActivateObjective(Node.NodeObjectiveState.Start);
+            startNode.ActivateObjective();
         }
-            
-        foreach (var finalObject in FinalObjects)
-        {
+    }
+
+    public void ActivateObjectiveEndpoints(Player player)
+    {
+        var finalObject = playerObjectives[player.id];
+        
+//        foreach (var finalObject in FinalObjects)
+//        {
             var finalNode = finalObject.GetComponent<Node>();
             if (finalNode.CanRegisterObjective())
             {
                 State = ObjectiveState.WaitingCapture;
-                finalNode.ActivateObjective(Node.NodeObjectiveState.Final);
+                finalNode.ActivateObjectiveEndpoint();
                 finalNode.Objective = this;
             }
-        }		
+//        }		
+    }
+    
+    public void DeactivateObjectiveEndpoints(Player player)
+    {
+        var finalObject = playerObjectives[player.id];
+        
+        var finalNode = finalObject.GetComponent<Node>();
+        finalNode.DeactivateObjectiveEndpoint();
+        finalNode.Objective = this;
+
     }
 
     public void DeactivateObjective()

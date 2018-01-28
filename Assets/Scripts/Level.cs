@@ -28,6 +28,7 @@ public class Level
         }
         
         Objective.ActivateObjective();
-     
+        GameData.Instance.currentObjective = Objective;
+
     }
 }

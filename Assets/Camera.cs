@@ -23,12 +23,13 @@ public class Camera : MonoBehaviour
 	
 	// Use this for initialization
 	void Start () {
-		
+
 	}
 	
 	// Update is called once per frame
 	void Update()
 	{
+		
 		if (Input.GetKey(KeyCode.RightArrow))
 		{
 			transform.Translate(new Vector3(speed * Time.deltaTime, 0, 0));

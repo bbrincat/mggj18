@@ -30,7 +30,8 @@ public class GameData
 //    public Material orangeTrail = Resources.Load("Orange") as Material;
  
     public List<Player> Players = new List<Player>();
-    public List<Objective> Objectives = new List<Objective>();	
+    public List<Objective> Objectives = new List<Objective>();
+    public Objective currentObjective;
     public GameObject[,] nodes = new GameObject[10,10];
     public List<Level> Levels = new List<Level>();
 

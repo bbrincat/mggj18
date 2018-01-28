@@ -76,15 +76,6 @@ public class Rotation : MonoBehaviour
 		
 		Debug.Log("Update: " + State );	
 		
-		if (player.hasBall)
-		{
-//			this.GetComponent("Halo").SetActive(true);
-		}
-		else
-		{
-//			GameObject.
-
-		}
 		switch (State)
 		{
 			case ZoomerState.Captured:
@@ -124,7 +115,7 @@ public class Rotation : MonoBehaviour
 	public bool attachToNode(GameObject gameObject)
 	{
 		var node = gameObject.GetComponent<Node>();
-		
+		Debug.Log("Collided with " + gameObject.name);
 		Debug.Log(node);
 		if (node != null)
 		{
@@ -143,6 +134,25 @@ public class Rotation : MonoBehaviour
 
 		return false;
 	}
+	
+	public void TakeBall()
+	{
+//
+//		var pos = new Vector3(gameObject.transform.position.x+3,
+//			gameObject.transform.position.y+3,
+//			gameObject.transform.position.z);
+		
+		BallDecoration = Instantiate(GameData.Instance.objective, gameObject.transform);
+//		BallDecoration.transform.position = pos;
+		BallDecoration.SetActive(true);
+	}
+
+	public void ReleaseBall()
+	{
+BallDecoration.SetActive(false);
+
+	}
+	
 	
 	void OnCollisionEnter(Collision collision)
 	{
