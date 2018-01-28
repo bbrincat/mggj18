@@ -9,6 +9,11 @@ TagManager:
   - Player 2
   - Player 3
   - Player 4
+  - p1image
+  - p2image
+  - p3image
+  - p4image
+  - Countdown
   layers:
   - Default
   - TransparentFX
