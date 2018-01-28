@@ -65,7 +65,7 @@ public class Main : MonoBehaviour
 				var ri = UnityEngine.Random.Range(-0.35f, 0.35f);
 				var rj = UnityEngine.Random.Range(-0.35f, 0.35f);
 
-				var offset = new Vector3(hgap * (i - 5 +ri), vgap * (j - 5 +rj ) , 0);
+				var offset = new Vector3(hgap * (i - 5 +ri + 0.5f) , vgap * (j - 5 +rj + 0.5f ) , 0);
 				var position = new Vector3(0,0,0) + offset;
 				var go = Instantiate(GameData.Instance.node, position, Quaternion.identity);
 				GameData.Instance.nodes[i,j] = go;
@@ -108,9 +108,9 @@ public class Main : MonoBehaviour
 
 		var finalNodes = new List<GameObject>();
 		finalNodes.Add(GameData.Instance.nodes[0, 0]);
-		finalNodes.Add(GameData.Instance.nodes[9, 0]);
-		finalNodes.Add(GameData.Instance.nodes[0, 9]);
 		finalNodes.Add(GameData.Instance.nodes[9, 9]);
+		finalNodes.Add(GameData.Instance.nodes[0, 0]);
+		finalNodes.Add(GameData.Instance.nodes[9, 0]);
 
 		var playerTrails = new List<Material>();
 		playerTrails.Add(pinkTrail);
@@ -134,6 +134,7 @@ public class Main : MonoBehaviour
 			GameData.Instance.Players[i].zoomer = zoomer;
 			zoomer.GetComponent<Rotation>().highlight= playerHightlights[i];
 			zoomer.GetComponent<Rotation>().player = GameData.Instance.Players[i];
+			GameData.Instance.Players[i].index = i;
 		}
 
 		var objective = new Objective(GameData.Instance.nodes[4, 4],finalNodes);

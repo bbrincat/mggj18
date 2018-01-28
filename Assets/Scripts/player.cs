@@ -6,7 +6,8 @@ public class Player
     public GameObject zoomer;
     public KeyCode key;
     public Guid id;
-    public bool hasBall; 
+    public bool hasBall;
+    public int index;
 
     public Player()
     {
