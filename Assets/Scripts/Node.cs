@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using NUnit.Framework.Constraints;
-using UnityEditor;
+﻿
 using UnityEngine;
-using Random = UnityEngine.Random;
+using UnityEngine.SceneManagement;
 
 public class Node : MonoBehaviour {
 
@@ -118,8 +114,9 @@ public class Node : MonoBehaviour {
 				{
 					if (player.hasBall)
 					{
-						Debug.Log("ball delivered");
-	
+						
+						SceneManager.LoadScene("Victory");
+						
 						ObjectiveDecoration.SetActive(false);
 						
 						nodeObjectiveState = NodeObjectiveState.FinalTaken;
@@ -130,6 +127,8 @@ public class Node : MonoBehaviour {
 						Objective.DeactivateObjective();
 	
 						//TODO replace
+						Debug.Log("ball delivered");
+						GameData.Instance.winner = player;
 						GameData.Instance.bravu.SetActive(true);
 					}
 				}

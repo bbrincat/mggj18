@@ -70,6 +70,7 @@
     <Compile Include="Assets\Scripts\QuitClick.cs" />
     <Compile Include="Assets\Scripts\Rotation.cs" />
     <Compile Include="Assets\Scripts\StopLoop.cs" />
+    <Compile Include="Assets\Scripts\WinnerScript.cs" />
     <Compile Include="Assets\UETools\Magic_Particle_Effects\Scripts\CameraMovement.cs" />
     <None Include="Assets\Shaders\Glow.shader" />
     <None Include="Assets\UETools\Magic_Particle_Effects\Readme.txt" />

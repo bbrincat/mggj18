@@ -8,7 +8,7 @@ public class Objective
     public GameObject StartObject, OwnerObject, OwnerPlayer;
     public List<GameObject> FinalObjects;
 
-    public Dictionary<Guid, GameObject> playerObjectives = new Dictionary<Guid, GameObject>();
+    public Dictionary<int, GameObject> playerObjectives = new Dictionary<int, GameObject>();
     
     public enum ObjectiveState
     {
@@ -32,7 +32,7 @@ public class Objective
         
         for (int i= 0; i < GameData.Instance.Players.Count; i++)
         {
-            playerObjectives.Add(GameData.Instance.Players[i].id,finalObjects[i]); 
+            playerObjectives.Add(i,finalObjects[i]); 
         }
         
     }
@@ -64,7 +64,7 @@ public class Objective
 
     public void ActivateObjectiveEndpoints(Player player)
     {
-        var finalObject = playerObjectives[player.id];
+        var finalObject = playerObjectives[player.index];
         
 //        foreach (var finalObject in FinalObjects)
 //        {
@@ -80,7 +80,7 @@ public class Objective
     
     public void DeactivateObjectiveEndpoints(Player player)
     {
-        var finalObject = playerObjectives[player.id];
+        var finalObject = playerObjectives[player.index];
         
         var finalNode = finalObject.GetComponent<Node>();
         finalNode.DeactivateObjectiveEndpoint();

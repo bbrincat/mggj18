@@ -35,6 +35,8 @@ public class GameData
     public GameObject[,] nodes = new GameObject[10,10];
     public List<Level> Levels = new List<Level>();
 
+    public Player winner;
+
 }
 
 	

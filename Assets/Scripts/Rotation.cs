@@ -1,11 +1,6 @@
 ﻿using System;
 using UnityEngine;
-using System.Collections;
-using System.Runtime.CompilerServices;
-using UnityEditor.UI;
-using UnityEngine.Analytics;
-using UnityEngine.Assertions.Must;
-using UnityEngine.Experimental.Audio.Google;
+
 
 public enum ZoomerState
 {
