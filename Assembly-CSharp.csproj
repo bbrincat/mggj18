@@ -55,8 +55,12 @@
     <Compile Include="Assets\Camera.cs" />
     <Compile Include="Assets\Scripts\AddPlayerButton.cs" />
     <Compile Include="Assets\Scripts\EmitStop.cs" />
+    <Compile Include="Assets\Scripts\GameData.cs" />
+    <Compile Include="Assets\Scripts\Level.cs" />
     <Compile Include="Assets\Scripts\Main.cs" />
     <Compile Include="Assets\Scripts\Node.cs" />
+    <Compile Include="Assets\Scripts\Objective.cs" />
+    <Compile Include="Assets\Scripts\player.cs" />
     <Compile Include="Assets\Scripts\PlayerSelect.cs" />
     <Compile Include="Assets\Scripts\Rotation.cs" />
     <Compile Include="Assets\Scripts\StopLoop.cs" />

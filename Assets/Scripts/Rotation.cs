@@ -28,16 +28,20 @@ public class Rotation : MonoBehaviour
 
 	public GameObject Owner;
 	public GameObject PreviousOwner;
-	
-	public KeyCode key;
 
 	public Transform explosion;
 	public Transform highlight;
+
+	public Player player;
+
+	public GameObject BallDecoration;
+	
 
 	void Start()
 	{
 		transform.position = (transform.position - Owner.transform.position).normalized * radius + Owner.transform.position;
 		radius = 2.0f;
+
 	}
 
 	public void SetOwner(GameObject g)
@@ -69,11 +73,20 @@ public class Rotation : MonoBehaviour
 	{
 		
 		Debug.Log("Update: " + State );	
+		
+		if (player.hasBall)
+		{
+//			this.GetComponent("Halo").SetActive(true);
+		}
+		else
+		{
+//			GameObject.
 
+		}
 		switch (State)
 		{
 			case ZoomerState.Captured:
-				if (Input.GetKeyDown(key))
+				if (Input.GetKeyDown(player.key))
 				{
 					LinearDirection = Vector3.Cross(transform.position - Owner.transform.position, Vector3.back).normalized;
 					PreviousOwner = Owner;
@@ -113,7 +126,7 @@ public class Rotation : MonoBehaviour
 		Debug.Log(node);
 		if (node != null)
 		{
-			if (node.TryAcceptPlayer())
+			if (node.TryAcceptPlayer(player))
 			{
 				Owner = gameObject;
 				if (GetPreviousNode() != null)
