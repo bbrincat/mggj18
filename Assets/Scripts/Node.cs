@@ -22,14 +22,12 @@ public class Node : MonoBehaviour {
 		FinalTaken
 	}
 
-	public GameObject StartObjectiveDecorator;
-	public GameObject FinalObjectiveDecorator;
-
 	public GameObject Completed;
 	
 	public NodeState State = NodeState.Free;
-	public NodeObjectiveState ObjectiveState = NodeObjectiveState.None;
+	public NodeObjectiveState nodeObjectiveState = NodeObjectiveState.None;
 	public Objective Objective;
+	
 	// Use this for initialization
 	void Start () {
 		
@@ -37,25 +35,32 @@ public class Node : MonoBehaviour {
 
 	public bool CanRegisterObjective()
 	{
-		return !(ObjectiveState == NodeObjectiveState.Start || ObjectiveState == NodeObjectiveState.Final);
+		return nodeObjectiveState != NodeObjectiveState.Start;
 	}
 
-	public void InitObjective(NodeObjectiveState state)
+	public void ActivateObjective(NodeObjectiveState state)
 	{
 		if (state == NodeObjectiveState.Start)
 		{
-			ObjectiveDecoration = Instantiate(StartObjectiveDecorator, gameObject.transform);
+			ObjectiveDecoration = Instantiate(GameData.Instance.objective, gameObject.transform);
 		}
 
 		if (state == NodeObjectiveState.Final)
 		{
-			ObjectiveDecoration = Instantiate(FinalObjectiveDecorator, gameObject.transform);
+			ObjectiveDecoration = Instantiate(GameData.Instance.objective, gameObject.transform);
+			Debug.Log("Activating Final Objective");
 
 		}
+		
 		ObjectiveDecoration.SetActive(true);
+		nodeObjectiveState = state;
 
-		ObjectiveState = state;
+	}
 
+	public void DeactivateObjective()
+	{
+		nodeObjectiveState = NodeObjectiveState.None;
+		ObjectiveDecoration.SetActive(false);
 	}
 	
 	
@@ -67,27 +72,41 @@ public class Node : MonoBehaviour {
 		}
 	}
 
-	public bool TryAcceptPlayer()
+	public bool TryAcceptPlayer(Player player)
 	{
 		if (State == NodeState.Free)
 		{
-			if (ObjectiveState == NodeObjectiveState.Start)
+			if (nodeObjectiveState == NodeObjectiveState.Start)
 			{
 				ObjectiveDecoration.SetActive(false);
 				
 				Objective.State = Objective.ObjectiveState.Captured;
-				ObjectiveState = NodeObjectiveState.StartTaken;
+				nodeObjectiveState = NodeObjectiveState.StartTaken;
+
+				player.hasBall = true;
+				Debug.Log("Transferred ball to player");
+				
 			}
 
-			if (ObjectiveState == NodeObjectiveState.Final)
+			if (nodeObjectiveState == NodeObjectiveState.Final)
 			{
-				ObjectiveDecoration.SetActive(false);	
-				Objective.State = Objective.ObjectiveState.Delivered;
-				ObjectiveState = NodeObjectiveState.FinalTaken;
-				
-				
-				//TODO replace
-				Completed.SetActive(true);
+				if (player.hasBall)
+				{
+					Debug.Log("ball delivered");
+
+					ObjectiveDecoration.SetActive(false);
+					
+					nodeObjectiveState = NodeObjectiveState.FinalTaken;
+
+					player.hasBall = false;
+					
+					Objective.winner = player;
+					Objective.DeactivateObjective();
+
+					//TODO replace
+					GameData.Instance.bravu.SetActive(true);
+				}
+	
 			}
 			
 			State = NodeState.Occupied;

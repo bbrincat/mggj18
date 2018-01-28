@@ -8,98 +8,9 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using Debug = UnityEngine.Debug;
 
-public class GameData
-{
-	private static GameData _instance;
- 
-	public static GameData Instance
-	{
-		get
-		{
-			if(_instance == null)
-				_instance = new GameData();
-			
-			return _instance;
-		}
-	}
-	
-	public List<Player> Players = new List<Player>();
-	public List<Objective> Objectives = new List<Objective>();
-	
-	
-	public GameObject[,] nodes = new GameObject[10,10];
-
-}
-
-public class Objective
-{
-	public GameObject StartNode, OwnerNode, OwnerPlayer, FinalNode;
-
-	public enum ObjectiveState
-	{
-		WaitingCapture,
-		Captured,
-		Delivered,
-		Invalid
-	}
-
-	public ObjectiveState State;
-
-	
-	
-	public Objective(GameObject startObject, GameObject finalObject)
-	{
-		var startNode = startObject.GetComponent<Node>();
-		var finalNode = finalObject.GetComponent<Node>();
-
-		if (startNode.CanRegisterObjective() && finalNode.CanRegisterObjective())
-		{
-			startNode.Objective = this;
-			finalNode.Objective = this;
-			
-			StartNode = startObject;
-			OwnerNode = startObject;
-			FinalNode = finalObject;
-
-			startNode.InitObjective(Node.NodeObjectiveState.Start);
-			finalNode.InitObjective(Node.NodeObjectiveState.Final);
-
-			State = ObjectiveState.WaitingCapture;
-		}
-		else
-		{
-			State = ObjectiveState.Invalid;
-		}		
-		
-		
-	}
-
-}	
-
-public class Player
-{
-	public GameObject zoomer;
-	public KeyCode key;
-	public Guid id;
-
-	public Player()
-	{
-		id = Guid.NewGuid();
-	}
-	public Player(KeyCode key)
-	{
-		id = Guid.NewGuid();
-		this.key = key;
-	}
-}
-	
-
-	
 public class Main : MonoBehaviour
 {
-	public GameObject node;
-	public GameObject zoomer;
-	
+
 	void Start ()
 	{
 		Debug.Log("Entered Main.cs");
@@ -114,47 +25,76 @@ public class Main : MonoBehaviour
 
 				var offset = new Vector3(10 * (i - 5 +ri), 10 * (j - 5 +rj ) , 0);
 				var position = new Vector3(0,0,0) + offset;
-				var go = Instantiate(node, position, Quaternion.identity);
+				var go = Instantiate(GameData.Instance.node, position, Quaternion.identity);
 				GameData.Instance.nodes[i,j] = go;
 				go.SetActive(true);
 			}
 		}
-		
+
 		//temporary players
 		GameData.Instance.Players.Add( new Player(KeyCode.Q));
-//		GameData.Instance.Players.Add( new Player(KeyCode.P));
+		GameData.Instance.Players.Add( new Player(KeyCode.P));
 //		GameData.Instance.Players.Add( new Player(KeyCode.C));
 //		GameData.Instance.Players.Add( new Player(KeyCode.M));
 		
-		var players = GameData.Instance.Players;
-		foreach (Player p in  players)
-		{
-			var z = Instantiate(zoomer, new Vector3(0, 0, 0), Quaternion.identity);
-			var rotationComponent = z.GetComponent<Rotation>();
+//		var players = GameData.Instance.Players;
+//		foreach (Player p in  players)
+//		{
+//			var z = Instantiate(GameData.Instance.zoomer, new Vector3(0, 0, 0), Quaternion.identity);
+//			var rotationComponent = z.GetComponent<Rotation>();
+//
+//			//Put player on a random node
+//			var attached = false;
+//			while (!attached)
+//			{
+//				var rpi = UnityEngine.Random.Range(0, 10);
+//				var rpj = UnityEngine.Random.Range(0, 10);
+//
+//				attached = rotationComponent.attachToNode(GameData.Instance.nodes[rpi, rpj]);
+//
+//			}
+//			//rotationComponent.ResetPosition();
+//			p.zoomer = z;
+//			rotationComponent.player = p;
+//			z.SetActive(true);	
+//		}
+		var playerNodes = new List<GameObject>(); 
+		playerNodes.Add(GameData.Instance.nodes[0,0]);
+		playerNodes.Add(GameData.Instance.nodes[9,0]);
 
-			//Put player on a random node
-			var attached = false;
-			while (!attached)
-			{
-				var rpi = UnityEngine.Random.Range(0, 10);
-				var rpj = UnityEngine.Random.Range(0, 10);
+		var finalNodes = new List<GameObject>();
+		finalNodes.Add(GameData.Instance.nodes[0, 0]);
+		finalNodes.Add(GameData.Instance.nodes[9, 0]);
+		finalNodes.Add(GameData.Instance.nodes[0, 9]);
+		finalNodes.Add(GameData.Instance.nodes[9, 9]);
 
-				attached = rotationComponent.attachToNode(GameData.Instance.nodes[rpi, rpj]);
+		var playerTrails = new List<Material>();
+		playerTrails.Add(GameData.Instance.pinkTrail);
+		playerTrails.Add(GameData.Instance.blueTrail);
+		playerTrails.Add(GameData.Instance.greenTrail);
+		playerTrails.Add(GameData.Instance.orangeTrail);
 
-			}
-			//rotationComponent.ResetPosition();
-			p.zoomer = z;
-			rotationComponent.key = p.key;
-			z.SetActive(true);	
-		}
 		
-		var objective = new Objective(GameData.Instance.nodes[0, 0],GameData.Instance.nodes[9, 9]);
+		
+		for (int i=0; i < GameData.Instance.Players.Count; i++)
+		{
+			var zoomer = Instantiate(GameData.Instance.zoomer, new Vector3(0, 0, 0), Quaternion.identity);
+			zoomer.GetComponent<TrailRenderer>().materials[0] = playerTrails[i];
+			GameData.Instance.Players[i].zoomer = zoomer;
+			zoomer.GetComponent<Rotation>().player = GameData.Instance.Players[i];
+		}
+
+		var objective = new Objective(GameData.Instance.nodes[4, 4],finalNodes);
+	
 		if (objective.State != Objective.ObjectiveState.Invalid)
 		{
 			GameData.Instance.Objectives.Add(objective);
 		}
-		
 
+
+		var level = new Level(objective, playerNodes);
+		GameData.Instance.Levels.Add(level);
+		level.ActivateLevel();
 	}
 
 	// Update is called once per frame
