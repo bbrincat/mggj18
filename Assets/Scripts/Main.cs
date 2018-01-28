@@ -11,6 +11,16 @@ using Debug = UnityEngine.Debug;
 public class Main : MonoBehaviour
 {
 
+	public Transform pinkHighlight;
+	public Transform blueHighlight;
+	public Transform greenHighlight;
+	public Transform orangeHighlight;
+
+	public Material pinkTrail;
+	public Material blueTrail;
+	public Material greenTrail;
+	public Material orangeTrail;
+
 	void Start ()
 	{
 		Debug.Log("Entered Main.cs");
@@ -32,8 +42,8 @@ public class Main : MonoBehaviour
 		}
 
 		//temporary players
-		GameData.Instance.Players.Add( new Player(KeyCode.Q));
-		GameData.Instance.Players.Add( new Player(KeyCode.P));
+//		GameData.Instance.Players.Add( new Player(KeyCode.Q));
+//		GameData.Instance.Players.Add( new Player(KeyCode.P));
 //		GameData.Instance.Players.Add( new Player(KeyCode.C));
 //		GameData.Instance.Players.Add( new Player(KeyCode.M));
 		
@@ -61,6 +71,8 @@ public class Main : MonoBehaviour
 		var playerNodes = new List<GameObject>(); 
 		playerNodes.Add(GameData.Instance.nodes[0,0]);
 		playerNodes.Add(GameData.Instance.nodes[9,0]);
+		playerNodes.Add(GameData.Instance.nodes[0,9]);
+		playerNodes.Add(GameData.Instance.nodes[9,9]);
 
 		var finalNodes = new List<GameObject>();
 		finalNodes.Add(GameData.Instance.nodes[0, 0]);
@@ -69,18 +81,26 @@ public class Main : MonoBehaviour
 		finalNodes.Add(GameData.Instance.nodes[9, 9]);
 
 		var playerTrails = new List<Material>();
-		playerTrails.Add(GameData.Instance.pinkTrail);
-		playerTrails.Add(GameData.Instance.blueTrail);
-		playerTrails.Add(GameData.Instance.greenTrail);
-		playerTrails.Add(GameData.Instance.orangeTrail);
+		playerTrails.Add(pinkTrail);
+		playerTrails.Add(blueTrail);
+		playerTrails.Add(greenTrail);
+		playerTrails.Add(orangeTrail);
 
-		
-		
+		var playerHightlights = new List<Transform>();
+		playerHightlights.Add(pinkHighlight);
+		playerHightlights.Add(blueHighlight);
+		playerHightlights.Add(greenHighlight);
+		playerHightlights.Add(orangeHighlight);
+
+		//Debug.Log (GameData.Instance.Players.Count);
+
 		for (int i=0; i < GameData.Instance.Players.Count; i++)
 		{
+			
 			var zoomer = Instantiate(GameData.Instance.zoomer, new Vector3(0, 0, 0), Quaternion.identity);
-			zoomer.GetComponent<TrailRenderer>().materials[0] = playerTrails[i];
+			zoomer.GetComponent<TrailRenderer>().material = playerTrails[i];
 			GameData.Instance.Players[i].zoomer = zoomer;
+			zoomer.GetComponent<Rotation>().highlight= playerHightlights[i];
 			zoomer.GetComponent<Rotation>().player = GameData.Instance.Players[i];
 		}
 

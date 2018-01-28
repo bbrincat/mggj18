@@ -19,13 +19,15 @@ public class GameData
 
     public GameObject zoomer = Resources.Load("Zoomer") as GameObject;
     public GameObject node = Resources.Load("Node") as GameObject;
-    public GameObject objective = Resources.Load("Objective") as GameObject;
+    public GameObject objective = Resources.Load("Magic_Ring_08") as GameObject;
     public GameObject bravu = Resources.Load("Bravu") as GameObject;
-    
-    public Material pinkTrail = Resources.Load("Glow") as Material;
-    public Material blueTrail = Resources.Load("Blue") as Material;
-    public Material greenTrail = Resources.Load("Green") as Material;
-    public Material orangeTrail = Resources.Load("Orange") as Material;
+
+//	public Transform highlight = Resources.Load("Highlight") as Transform;
+//    
+//    public Material pinkTrail = Resources.Load("Glow") as Material;
+//    public Material blueTrail = Resources.Load("Blue") as Material;
+//    public Material greenTrail = Resources.Load("Green") as Material;
+//    public Material orangeTrail = Resources.Load("Orange") as Material;
  
     public List<Player> Players = new List<Player>();
     public List<Objective> Objectives = new List<Objective>();	

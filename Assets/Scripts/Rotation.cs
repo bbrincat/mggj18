@@ -35,6 +35,8 @@ public class Rotation : MonoBehaviour
 	public Player player;
 
 	public GameObject BallDecoration;
+
+	private AudioSource audiosource;
 	
 
 	void Start()
@@ -144,7 +146,9 @@ public class Rotation : MonoBehaviour
 	
 	void OnCollisionEnter(Collision collision)
 	{
-		
+		audiosource = this.GetComponent<AudioSource> ();
+		audiosource.Play ();
+
 		Debug.Log("Collision: " + State );	
 //		State = ZoomerState.Collision;
 		
