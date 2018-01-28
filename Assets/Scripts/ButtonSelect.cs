@@ -9,7 +9,12 @@ public class ButtonSelect : MonoBehaviour {
 	private bool readyPlayer2 = false;
 	private bool readyPlayer3 = false;
 
+	private bool secondCount = false;
+	private bool thirdCount = false;
+
 	private bool gameReady = false;
+
+	public GameObject countdown;
 
 	public Button buttonPlayer1;
 	public Button buttonPlayer2;
@@ -20,6 +25,10 @@ public class ButtonSelect : MonoBehaviour {
 	public Sprite OnSpritePlayer2;
 	public Sprite OnSpritePlayer3;
 	public Sprite OnSpritePlayer4;
+
+	public Sprite sprite3;
+	public Sprite sprite2;
+	public Sprite sprite1;
 
 	float timeLeft = 3.0f;
 
@@ -43,12 +52,22 @@ public class ButtonSelect : MonoBehaviour {
 			ChangeImage (buttonPlayer4, OnSpritePlayer4);
 			GameData.Instance.Players.Add (new Player (KeyCode.M));
 			gameReady = true;
+			countdown.SetActive (true);
 		}
 		if(Input.GetKeyDown (KeyCode.Space) && readyPlayer1 && readyPlayer2) {
 			gameReady = true;
+			countdown.SetActive (true);
 		}
 		if (gameReady) {
+			countdown.GetComponent<Image> ().sprite = sprite1;
 			timeLeft -= Time.deltaTime;
+			if (timeLeft < 3.0f && timeLeft > 2.0f) {
+				countdown.GetComponent<Image> ().sprite = sprite3;
+				thirdCount = true;
+			} 
+			if (timeLeft > 1.0f && timeLeft < 2.0f) {
+				countdown.GetComponent<Image> ().sprite = sprite2;
+			}
 		}
 		if (timeLeft < 0) {
 			Application.LoadLevel("main");
